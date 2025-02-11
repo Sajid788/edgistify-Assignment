@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { connection, PORT } = require("./config/db");
 const { userRouter } = require("./routes/UserRoutes");
+const { productRouter } = require("./routes/ProductRoutes")
 
 const app = express();
 app.use(express.json());
@@ -13,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", userRouter);
-
+app.use("/api/products", productRouter); 
 
 app.listen(PORT, async () => {
   try {
