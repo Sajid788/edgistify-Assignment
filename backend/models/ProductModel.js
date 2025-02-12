@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema(
     rating: { type: Number, default: 0 },
     images: { type: [String], required: true },
     quantity: { type: Number, required: true },
+    size: { type: String, required: true },
   },
   {
     timestamps: true,
