@@ -1,79 +1,58 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const UserModel = require("../models/UserModel");
-require("dotenv").config();
 
-// Register a new user
-const userRegister = async (req, res) => {
-  const { name, email, password } = req.body;
-
-  // Check if all fields are filled
-  if (!name || !email || !password) {
-    return res.status(400).json({ msg: "Please fill all the details!!" });
-  }
-
+//create a account
+const register = async (req, res, next) => {
   try {
-    // Check if the user already exists by email
-    const emailExist = await UserModel.findOne({ email });
-    if (emailExist) {
-      return res.status(400).json({
-        message: "User already exists. Please login!",
-      });
+    const { fullName, email, password } = req.body;
+
+    if (await UserModel.findOne({ email })) {
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash the password
-    const hash = await bcrypt.hash(password, 5);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user with hashed password
     const user = await UserModel.create({
-      name: name,
-      email: email,
-      password: hash,
+      fullName,
+      email,
+      password: hashedPassword,
     });
 
-    // Respond with success message
-    res.json({ message: "User signed up successfully", user });
+    res.status(201).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      token: jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE,
+      }),
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 };
 
-// User login
-
-const userLogin = async (req, res) => {
+//Login here
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: "Please fill all the details" });
-    }
-    
-    // Find the user by email
     const user = await UserModel.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
-    }
 
-    // Compare the password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: "Invalid email or password" });
     }
-    
-    // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
 
     res.json({
-      message: "Login successful",
-      token,
-      userId: user._id,
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      token: jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE,
+      }),
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    next(error);
   }
 };
 
-module.exports = { userRegister, userLogin };
+module.exports = { register, login };
