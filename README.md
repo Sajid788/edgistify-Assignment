@@ -219,28 +219,6 @@ This is a full-stack e-commerce platform that allows users to register, log in, 
 - JWT for authentication and session management
 - bcrypt.js for password hashing
 
-## Installation & Setup
-
-### Clone the Repository
-```sh
-git clone https://github.com/yourusername/ecommerce-platform.git
-cd ecommerce-platform
-```
-
-### Backend Setup
-```sh
-cd backend
-npm install
-npm start
-```
-
-### Frontend Setup
-```sh
-cd frontend
-npm install
-npm run dev
-```
-
 ## System Requirements
 - The system should be scalable and secure.
 - Optimized API responses for quick access.
