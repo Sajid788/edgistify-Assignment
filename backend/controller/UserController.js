@@ -3,56 +3,57 @@ const bcrypt = require("bcryptjs");
 const UserModel = require("../models/UserModel");
 
 //create a account
-const register = async (req, res, next) => {
-  try {
-    const { fullName, email, password } = req.body;
-
-    if (await UserModel.findOne({ email })) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await UserModel.create({
-      fullName,
-      email,
-      password: hashedPassword,
+const register = async (req, res) => {
+  const { fullName, email, password } = req.body;
+  const result = await UserModel.findOne({ email });
+  if (result) {
+    res.status(400).send({ message: "Email already exists" });
+  } else {
+    bcrypt.hash(password, 5, async function (err, hash) {
+      if (err) {
+        res
+          .status(500)
+          .send({ message: "Something went wrong, please try again" });
+      }
+      const new_user = new UserModel({
+        fullName: fullName,
+        email: email,
+        password: hash,
+      });
+      await new_user.save();
+      res.status(200).send({ message: "Signup successful" });
     });
-
-    res.status(201).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      token: jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE,
-      }),
-    });
-  } catch (error) {
-    next(error);
   }
 };
 
 //Login here
 const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await UserModel.findOne({ email });
+  const { email, password } = req.body;
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    res.json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      token: jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE,
-      }),
-    });
-  } catch (error) {
-    next(error);
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return res.status(404).send({ message: "User not found" });
   }
+
+  const userId = user._id;
+  const userName = user.name;
+  const hash = user.password;
+
+  bcrypt.compare(password, hash, async function (err, result) {
+    if (err) {
+      return res
+        .status(500)
+        .send({ message: "Something went wrong, please try again" });
+    }
+    if (result) {
+      const token = jwt.sign({ userId, userName }, process.env.JWT_SECRET);
+      res
+        .status(200)
+        .send({ message: "Login successful", token, userName, userId });
+    } else {
+      res.status(401).send({ message: "Login failed" });
+    }
+  });
 };
 
 module.exports = { register, login };
