@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getProducts, addToCart } from "../api/api"; // Import addToCart
 import { toast } from "react-toastify";
+import { FiShoppingCart } from "react-icons/fi";
 
 interface Product {
   _id: string;
@@ -135,10 +136,11 @@ function Products() {
                 </div>
 
                 <button
-                  className="px-4 cursor-pointer bg-[#319795] text-white py-1.5 rounded-md hover:bg-teal-700 transition"
+                  className="px-4 cursor-pointer flex gap-2 items-center bg-[#319795] text-white py-1.5 rounded-md hover:bg-teal-700 transition"
                   onClick={() => handleAddToCart(product)}
                 >
-                  🛒 Add Cart
+                  <FiShoppingCart className="h-5 w-5 text-white" />
+                  Add Cart
                 </button>
               </div>
             </div>

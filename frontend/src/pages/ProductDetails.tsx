@@ -85,7 +85,7 @@ const ProductDetails: React.FC = () => {
         {/* Left Side - Product Image */}
         <div className="w-full lg:w-6/12">
           <img
-            src={product.images}
+           src={product.images[0]}
             alt={product.title}
             className="w-80 rounded-lg shadow-md"
           />
@@ -114,9 +114,9 @@ const ProductDetails: React.FC = () => {
               <button
                 key={size}
                 onClick={() => setSelectedSize(size)}
-                className={`px-4 py-1 border rounded-full ${
+                className={`px-4 py-1 border rounded-full cursor-pointer ${
                   selectedSize === size
-                    ? "bg-teal-600 text-white border-teal-600"
+                    ? "bg-teal-600 text-white border-teal-600 cursor-pointer"
                     : "border-gray-500"
                 }`}
               >
@@ -130,14 +130,14 @@ const ProductDetails: React.FC = () => {
             <p className="font-medium">Quantity:</p>
             <button
               onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-              className="px-4 py-2 border rounded-md hover:bg-gray-200"
+              className="px-4 py-2 hover:text-white font-bold border rounded-md border-neutral-300 hover:bg-teal-600 cursor-pointer"
             >
               -
             </button>
-            <span className="px-4">{quantity}</span>
+            <span className="px-4 text-teal-600 font-bold">{quantity}</span>
             <button
               onClick={() => setQuantity((prev) => prev + 1)}
-              className="px-4 py-2 border rounded-md hover:bg-gray-200"
+              className="px-4 py-2 border hover:text-white font-bold border-neutral-300 rounded-md hover:bg-teal-600 cursor-pointer"
             >
               +
             </button>
@@ -146,7 +146,7 @@ const ProductDetails: React.FC = () => {
           {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}
-            className="w-full bg-teal-600 text-white py-3 px-6 rounded-md hover:bg-teal-700 transition duration-200"
+            className="w-full bg-teal-600 cursor-pointer text-white py-3 px-6 rounded-md hover:bg-teal-700 transition duration-200"
           >
             Add to Cart
           </button>

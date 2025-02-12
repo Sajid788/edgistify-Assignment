@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getCartItems, deleteCartItem } from "../api/api";
+import { FiShoppingCart } from "react-icons/fi";
+import { MdDelete } from "react-icons/md";
 
 interface CartItem {
   _id: string;
@@ -48,7 +50,7 @@ function Cart() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
       </div>
     );
   }
@@ -68,10 +70,10 @@ function Cart() {
           </button>
         </div>
       ) : (
-        <div className="flex flex-col lg:flex-row justify-between">
-          <div className="flex flex-wrap gap-6">
+        <div className="flex w-full flex-col gap-8 lg:flex-row justify-between">
+          <div className="grid grid-cols-3 w-[75%] gap-6">
             {cartItems.map((item) => (
-              <div key={item._id} className="bg-white rounded-lg shadow p-4 w-80">
+              <div key={item._id} className="bg-white rounded-lg shadow p-4 ">
                 <img src="https://th.bing.com/th/id/OIP.TkqQMVQp5xe9VFJ4e3ovWQHaFt?pid=ImgDet&w=178&h=137&c=7&dpr=1.5" alt={item.title} className="w-full h-60 object-contain rounded-md" />
                 <h3 className="font-semibold text-lg mt-4">{item.title}</h3>
                 <div className="flex items-center justify-between mt-2">
@@ -81,22 +83,24 @@ function Cart() {
                   <p>Qty: {item.quantity}</p>
                   <button
                     onClick={() => handleRemoveItem(item._id)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 cursor-pointer"
                   >
-                    🗑️
+                    <MdDelete className="h-6 w-6" />
                   </button>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="bg-white shadow-md rounded-lg p-6 h-fit mt-8 lg:mt-0">
-            <p className="text-xl font-semibold">Total: <span className="font-bold">$ {Math.round(calculateTotal())}</span></p>
+          <div className="bg-white shadow-md w-[25%]  rounded-lg p-6 h-fit mt-8 lg:mt-0">
+            <p className="text-xl font-semibold text-teal-600">Total: <span className="font-bold text-teal-600">$ {Math.round(calculateTotal())}</span></p>
             <button
               onClick={() => navigate("/checkout")}
-              className="bg-teal-600 text-white flex items-center justify-center py-2 px-6 rounded mt-4 w-full hover:bg-teal-700"
+              className="bg-teal-600 cursor-pointer text-white gap-3 flex items-center justify-center py-2 px-6 rounded mt-4 w-full hover:bg-teal-700"
             >
-              Proceed to Checkout 🛒
+              
+               Proceed to Checkout 
+               <FiShoppingCart className="h-5 w-5" />
             </button>
           </div>
         </div>

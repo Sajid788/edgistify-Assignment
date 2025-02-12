@@ -128,7 +128,7 @@ function Checkout() {
           <button
             type="submit"
             disabled={loading}
-            className={`py-2 px-6 rounded-lg text-white transition-all ${
+            className={`py-2 px-6 rounded-lg text-white transition-all cursor-pointer ${
               loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#319795]"
             }`}
           >
